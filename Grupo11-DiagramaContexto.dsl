@@ -33,13 +33,12 @@ workspace "BrinqueFeliz" "Diagrama de Contexto" {
         ss -> sso "Autentica usuário"
         ss -> email "Envia e-mails"
         email -> cliente "Entrega e-mails"
-        ss -> cliente "Notifica cliente"
     }
     
     views {
         systemContext ss "Diagram1" {
             include *
-            autolayout tb        
+            autolayout lr   
         }
 
         styles {

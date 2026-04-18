@@ -32,7 +32,7 @@ workspace "BrinqueFeliz" "Diagrama de Contexto" {
         
         ss -> sso "Autentica usuário"
         ss -> email "Envia e-mails"
-        email -> cliente "Entrega e-mails"
+        email -> cliente "Envia notificações via email"
     }
     
     views {

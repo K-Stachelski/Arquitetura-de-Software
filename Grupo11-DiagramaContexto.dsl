@@ -1,15 +1,15 @@
-workspace "BrinqueFeliz" "Diagrama de Contexto" {
+workspace "BrinqueFeliz" "Diagrama de Contexto e Containers" {
 
     !identifiers hierarchical
 
     model {
     
-        // Pessoas/Usuarios/Stakeholders
+        // Pessoas
         admin = person "Administrador" "Gerencia o catálogo, usuários e permissões do sistema."
         cliente = person "Cliente" "Usuário que navega no catálogo e realiza compras."
         funcionario = person "Funcionário" "Colaborador que processa pedidos e realiza o atendimento."
         
-        // Sistemas externos.
+        // Sistemas externos
         sso = softwareSystem "Sistema de Autenticação SSO" {
             description "Autentica usuários via SSO"
             tags "External"
@@ -20,19 +20,44 @@ workspace "BrinqueFeliz" "Diagrama de Contexto" {
             tags "External"
         }
         
-        // Sistema principal.
+        // Sistema principal + containers
         ss = softwareSystem "BrinqueFeliz" {
             description "Sistema Principal da Loja BrinqueFeliz."
+
+            web = container "Web Application" {
+                description "Interface web utilizada pelos usuários."
+                technology "HTML, CSS, JavaScript"
+            }
+
+            api = container "Backend API" {
+                description "Responsável pela lógica de negócio e integrações."
+                technology "Java / Spring Boot"
+            }
+
+            db = container "Database" {
+                description "Armazena dados de usuários, pedidos e produtos."
+                technology "PostgreSQL"
+                tags "Database"
+            }
         }
         
-        // Relacionamentos.
+        // Contexto
         admin -> ss "Gerencia usuários e permissões"
         cliente -> ss "Realiza operações básicas"
         funcionario -> ss "Gerencia pedidos e atende clientes"
         
-        ss -> sso "Autentica usuário"
-        ss -> email "Envia e-mails"
-        email -> cliente "Envia notificações via email"
+        email -> cliente "Entrega notificações"
+        
+        // Containers
+        admin -> ss.web "Usa"
+        cliente -> ss.web "Usa"
+        funcionario -> ss.web "Usa"
+        
+        ss.web -> ss.api "Consome API"
+        ss.api -> ss.db "Lê e grava dados"
+        
+        ss.api -> sso "Autentica usuários"
+        ss.api -> email "Envia notificações por e-mail"
     }
     
     views {
@@ -40,14 +65,16 @@ workspace "BrinqueFeliz" "Diagrama de Contexto" {
             include *
             autolayout lr   
         }
+        
+        container ss "Diagram2" {
+            include *
+            autolayout lr
+        }
 
         styles {
             element "Element" {
                 background #121212
                 color #ffffff
-                stroke #ffffff
-                strokeWidth 2
-                shape roundedbox
             }
 
             element "Person" {
@@ -61,16 +88,22 @@ workspace "BrinqueFeliz" "Diagrama de Contexto" {
                 color #ffffff
             }
 
+            element "Container" {
+                background #1b5e20
+                color #ffffff
+            }
+
+            element "Database" {
+                shape cylinder
+                background #1b5e20
+                color #ffffff
+            }
+
             element "External" {
                 background #424242
                 color #ffffff
-                border dashed
             }
 
-            relationship "Relationship" {
-                color #ffffff
-                thickness 2
-            }
         }
     }
 

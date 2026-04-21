@@ -3,7 +3,6 @@ workspace "BrinqueFeliz" "Diagrama de Contexto e Containers" {
     !identifiers hierarchical
 
     model {
-    
         // Pessoas
         admin = person "Administrador" "Gerencia catálogo, usuários e permissões."
         cliente = person "Cliente" "Navega no catálogo e realiza compras."
@@ -19,7 +18,6 @@ workspace "BrinqueFeliz" "Diagrama de Contexto e Containers" {
             description "Responsável pelo envio de notificações e confirmações."
             tags "External"
         }
-        
         // Sistema principal e Containers
         ss = softwareSystem "BrinqueFeliz" {
             description "Sistema de vendas e gerenciamento da loja de brinquedos."
@@ -35,8 +33,8 @@ workspace "BrinqueFeliz" "Diagrama de Contexto e Containers" {
             }
 
             mobile = container "App Mobile" {
-                description "Aplicativo para Android e IOS, acessado pelo cliente."
-                technology "Flutter"
+                description "Aplicativo para Android e IOS, acessado pelo cliente para realização de compras."
+                technology "React Native, TypeScript/JS"
             }
 
             backend = container "Backend" {
@@ -50,7 +48,6 @@ workspace "BrinqueFeliz" "Diagrama de Contexto e Containers" {
                 tags "Database"
             }
         }
-        
         // Contexto
         admin -> ss "Administra usuários, permissões e catálogo"
         funcionario -> ss "Gerencia pedidos e realiza atendimento"
@@ -133,5 +130,4 @@ workspace "BrinqueFeliz" "Diagrama de Contexto e Containers" {
     configuration {
         scope softwaresystem
     }
-
 }

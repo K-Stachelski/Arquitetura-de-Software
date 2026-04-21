@@ -5,68 +5,83 @@ workspace "BrinqueFeliz" "Diagrama de Contexto e Containers" {
     model {
     
         // Pessoas
-        admin = person "Administrador" "Gerencia o catálogo, usuários e permissões do sistema."
-        cliente = person "Cliente" "Usuário que navega no catálogo e realiza compras."
-        funcionario = person "Funcionário" "Colaborador que processa pedidos e realiza o atendimento."
+        admin = person "Administrador" "Gerencia catálogo, usuários e permissões."
+        cliente = person "Cliente" "Navega no catálogo e realiza compras."
+        funcionario = person "Funcionário" "Processa pedidos e atende clientes."
         
         // Sistemas externos
         sso = softwareSystem "Sistema de Autenticação SSO" {
-            description "Autentica usuários via SSO"
+            description "Responsável pela autenticação segura de usuários."
             tags "External"
         }
         
         email = softwareSystem "Sistema de E-mail" {
-            description "Envia confirmação de cadastro e compras."
+            description "Responsável pelo envio de notificações e confirmações."
             tags "External"
         }
         
-        // Sistema principal + containers
+        // Sistema principal e Containers
         ss = softwareSystem "BrinqueFeliz" {
-            description "Sistema Principal da Loja BrinqueFeliz."
+            description "Sistema de vendas e gerenciamento da loja de brinquedos."
 
-            web = container "Web Application" {
-                description "Interface web utilizada pelos usuários."
+            webAdmin = container "Website Loja" {
+                description "Interface web para administração e funcionarios."
                 technology "HTML, CSS, JavaScript"
             }
 
-            api = container "Backend API" {
-                description "Responsável pela lógica de negócio e integrações."
+            webCliente = container "Website Cliente" {
+                description "Interface web para clientes navegarem e realizarem compras."
+                technology "HTML, CSS, JavaScript"
+            }
+
+            mobile = container "App Mobile" {
+                description "Aplicativo para Android e IOS, acessado pelo cliente."
+                technology "Flutter"
+            }
+
+            backend = container "Backend" {
+                description "Processa regras de negócio, autenticação e integrações."
                 technology "Java / Spring Boot"
             }
 
-            db = container "Database" {
-                description "Armazena dados de usuários, pedidos e produtos."
+            bd = container "Banco de Dados" {
+                description "Armazena dados de usuários, pedidos, produtos e pagamentos."
                 technology "PostgreSQL"
                 tags "Database"
             }
         }
         
         // Contexto
-        admin -> ss "Gerencia usuários e permissões"
-        cliente -> ss "Realiza operações básicas"
-        funcionario -> ss "Gerencia pedidos e atende clientes"
-        
-        email -> cliente "Entrega notificações"
+        admin -> ss "Administra usuários, permissões e catálogo"
+        funcionario -> ss "Gerencia pedidos e realiza atendimento"
+        cliente -> ss "Consulta produtos e realiza compras"
+
+        email -> cliente "Entrega notificações e confirmações de compra"
         
         // Containers
-        admin -> ss.web "Usa"
-        cliente -> ss.web "Usa"
-        funcionario -> ss.web "Usa"
+        admin -> ss.webAdmin "Gerencia sistema via interface administrativa"
+        funcionario -> ss.webAdmin "Opera pedidos e atendimento via painel"
         
-        ss.web -> ss.api "Consome API"
-        ss.api -> ss.db "Lê e grava dados"
+        cliente -> ss.webCliente "Navega no catálogo e realiza compras via navegador"
+        cliente -> ss.mobile "Realiza compras e acompanha pedidos via aplicativo"
         
-        ss.api -> sso "Autentica usuários"
-        ss.api -> email "Envia notificações por e-mail"
+        // Relacionamentos
+        ss.webAdmin -> ss.backend "Envia requisições de gerenciamento"
+        ss.webCliente -> ss.backend "Envia requisições de navegação e compra"
+        ss.mobile -> ss.backend "Consome serviços de catálogo e pedidos"
+        
+        ss.backend -> ss.bd "Consulta dados de necessarios"
+        ss.backend -> sso "Valida identidade dos usuários"
+        ss.backend -> email "Envia notificações de cadastro, pedidos e pagamentos"
     }
     
     views {
-        systemContext ss "Diagram1" {
+        systemContext ss "Contexto" {
             include *
-            autolayout lr   
+            autolayout lr
         }
         
-        container ss "Diagram2" {
+        container ss "Containers" {
             include *
             autolayout lr
         }
@@ -75,6 +90,9 @@ workspace "BrinqueFeliz" "Diagrama de Contexto e Containers" {
             element "Element" {
                 background #121212
                 color #ffffff
+                stroke #ffffff
+                strokeWidth 2
+                shape roundedbox
             }
 
             element "Person" {
@@ -102,8 +120,13 @@ workspace "BrinqueFeliz" "Diagrama de Contexto e Containers" {
             element "External" {
                 background #424242
                 color #ffffff
+                border dashed
             }
 
+            relationship "Relationship" {
+                color #ffffff
+                thickness 2
+            }
         }
     }
 

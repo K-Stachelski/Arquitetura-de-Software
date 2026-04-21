@@ -44,7 +44,7 @@ workspace "BrinqueFeliz" "Diagrama de Contexto e Containers" {
 
             bd = container "Banco de Dados" {
                 description "Armazena dados de usuários, pedidos, produtos e pagamentos."
-                technology "PostgreSQL"
+                technology "SQL Server"
                 tags "Database"
             }
         }
